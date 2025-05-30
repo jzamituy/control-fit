@@ -15,16 +15,41 @@ export default function Navigation() {
 
   // Verify authentication and load user data
   useEffect(() => {
-    const checkAuth = () => {
-      const isAuth = authService.isAuthenticated();
-      setIsAuthenticated(isAuth);
+    const checkAuth = async () => {
+      try {
+        const isAuth = authService.isAuthenticated();
 
-      if (isAuth) {
-        const user = authService.getCurrentUser();
-        if (user) {
-          setUserName(user.name || "User");
-          setUserEmail(user.email || "");
+        if (isAuth) {
+          // Verify token with server
+          const token = authService.getToken();
+          if (token) {
+            const validationResult = await authService.validateToken(token);
+            if (validationResult) {
+              setIsAuthenticated(true);
+              const user = authService.getCurrentUser();
+              if (user) {
+                setUserName(user.name || "User");
+                setUserEmail(user.email || "");
+              }
+            } else {
+              // Token is invalid, logout
+              authService.logout();
+              setIsAuthenticated(false);
+              setUserName("");
+              setUserEmail("");
+            }
+          } else {
+            setIsAuthenticated(false);
+          }
+        } else {
+          setIsAuthenticated(false);
         }
+      } catch (error) {
+        console.error("Navigation authentication error:", error);
+        authService.logout();
+        setIsAuthenticated(false);
+        setUserName("");
+        setUserEmail("");
       }
     };
 

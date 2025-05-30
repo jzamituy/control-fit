@@ -33,14 +33,24 @@ export default function HomePage() {
     const checkAuth = async () => {
       try {
         const isAuth = authService.isAuthenticated();
-        setIsAuthenticated(isAuth);
 
         if (isAuth) {
-          // Verify token
+          // Verify token with server
           const token = authService.getToken();
           if (token) {
-            await authService.validateToken(token);
+            const validationResult = await authService.validateToken(token);
+            if (validationResult) {
+              setIsAuthenticated(true);
+            } else {
+              // Token is invalid, logout
+              authService.logout();
+              setIsAuthenticated(false);
+            }
+          } else {
+            setIsAuthenticated(false);
           }
+        } else {
+          setIsAuthenticated(false);
         }
       } catch (error) {
         console.error("Authentication error:", error);
@@ -93,6 +103,19 @@ export default function HomePage() {
         });
       } catch (error) {
         console.error("Error loading data:", error);
+
+        // Check if error is authentication related
+        if (
+          error instanceof Error &&
+          (error.message.includes("401") ||
+            error.message.includes("Unauthorized") ||
+            error.message.includes("Token not provided"))
+        ) {
+          // Authentication error, logout and refresh
+          authService.logout();
+          setIsAuthenticated(false);
+          window.location.reload();
+        }
       }
     };
 
