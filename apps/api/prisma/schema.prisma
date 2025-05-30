@@ -1,0 +1,103 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// Model for companies (gyms)
+model Company {
+  id          String    @id @default(uuid())
+  name        String
+  description String?
+  address     String?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  users       User[]
+  expenses    Expense[]
+  categories  Category[]
+}
+
+// Model for system users
+model User {
+  id          String    @id @default(uuid())
+  email       String    @unique
+  password    String
+  name        String
+  role        Role      @default(USER)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  expenses    Expense[]
+  categories  Category[]
+  companyId   String?
+  company     Company?  @relation(fields: [companyId], references: [id])
+}
+
+// User roles
+enum Role {
+  ADMIN
+  USER
+}
+
+// Expense categories
+model Category {
+  id          String    @id @default(uuid())
+  name        String
+  description String?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  userId      String
+  user        User      @relation(fields: [userId], references: [id])
+  expenses    Expense[]
+  companyId   String?
+  company     Company?  @relation(fields: [companyId], references: [id])
+}
+
+// Model for expenses
+model Expense {
+  id          String    @id @default(uuid())
+  amount      Float
+  description String
+  date        DateTime
+  currency    String    @default("USD")  // Currency of the expense (US Dollar by default)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  categoryId  String
+  category    Category  @relation(fields: [categoryId], references: [id])
+  userId      String
+  user        User      @relation(fields: [userId], references: [id])
+  companyId   String?
+  company     Company?  @relation(fields: [companyId], references: [id])
+}
+
+// Model for suppliers
+model Supplier {
+  id          String    @id @default(uuid())
+  name        String
+  email       String?
+  phone       String?
+  address     String?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}
+
+// Model for exchange rates
+model ExchangeRate {
+  id          String    @id @default(uuid())
+  fromCurrency String    // Source currency code (e.g.: USD)
+  toCurrency   String    // Target currency code (e.g.: UYU)
+  rate        Float     // Exchange rate (e.g.: 42.5 for USD to UYU)
+  date        DateTime  // Date of the exchange rate
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  @@unique([fromCurrency, toCurrency, date])
+}

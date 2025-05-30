@@ -2,18 +2,21 @@
   "name": "control-fit",
   "private": true,
   "scripts": {
-    "build": "turbo run build",
-    "dev": "turbo run dev",
-    "lint": "turbo run lint",
+    "build": "turbo build",
+    "dev": "turbo dev",
+    "lint": "turbo lint",
     "format": "prettier --write \"**/*.{ts,tsx,md}\"",
-    "check-types": "turbo run check-types"
+    "db:migrate:dev": "turbo db:migrate:dev",
+    "db:generate": "turbo db:generate",
+    "db:seed": "turbo db:seed"
   },
   "devDependencies": {
-    "prettier": "^3.5.3",
-    "turbo": "^2.5.3",
-    "typescript": "5.8.2"
+    "@turbo/gen": "^2.0.0",
+    "eslint": "^8.0.0",
+    "prettier": "^3.0.0",
+    "turbo": "^2.0.0"
   },
-  "packageManager": "pnpm@9.0.0",
+  "packageManager": "pnpm@8.9.0",
   "engines": {
     "node": ">=18"
   }

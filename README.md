@@ -1,84 +1,135 @@
-# Turborepo starter
+# Control-Fit: Expense Management System for Gym
 
-This Turborepo starter is maintained by the Turborepo core team.
+This is a monorepo project that includes a frontend application (Next.js) and a backend API (NestJS) for expense management.
 
-## Using this example
+- **API (NestJS + Prisma + PostgreSQL)**: Backend for expense management, categories, users and authentication.
+- **Frontend (Next.js + TypeScript + Tailwind CSS)**: User interface for the expense management system.
 
-Run the following command:
+## Technologies Used
 
-```sh
-npx create-turbo@latest
-```
+### Backend
 
-## What's inside?
+- **NestJS**: Node.js framework for building scalable server-side applications
+- **Prisma**: ORM for database management and migrations
+- **PostgreSQL**: Relational database
+- **JWT**: For user authentication and authorization
+- **bcrypt**: For password hashing
 
-This Turborepo includes the following packages/apps:
+### Frontend
 
-### Apps and Packages
+- **Next.js 14**: React framework with App Router
+- **TypeScript**: For type safety
+- **Tailwind CSS**: For styling
 
-- `docs`: a [Next.js](https://nextjs.org/) app
-- `web`: another [Next.js](https://nextjs.org/) app
-- `@repo/ui`: a stub React component library shared by both `web` and `docs` applications
-- `@repo/eslint-config`: `eslint` configurations (includes `eslint-config-next` and `eslint-config-prettier`)
-- `@repo/typescript-config`: `tsconfig.json`s used throughout the monorepo
+## Project Setup
 
-Each package/app is 100% [TypeScript](https://www.typescriptlang.org/).
+### Prerequisites
 
-### Utilities
+- Node.js (recommended version 18 or higher)
+- pnpm (package manager)
+- PostgreSQL database
 
-This Turborepo has some additional tools already setup for you:
+### Installation
 
-- [TypeScript](https://www.typescriptlang.org/) for static type checking
-- [ESLint](https://eslint.org/) for code linting
-- [Prettier](https://prettier.io) for code formatting
+1. Clone the repository
+2. Install dependencies: `pnpm install`
+3. Set up environment variables:
 
-### Build
+   - Copy `apps/api/.env.example` to `apps/api/.env` (if exists)
+   - Configure PostgreSQL database URL:
 
-To build all apps and packages, run the following command:
+   ```
+   DATABASE_URL="postgresql://user:password@localhost:5432/control_fit?schema=public"
+   ```
 
-```
-cd my-turborepo
-pnpm build
-```
+4. Create database and apply migrations
 
-### Develop
+   ```bash
+   cd apps/api
+   pnpm db:push
+   ```
 
-To develop all apps and packages, run the following command:
+5. Seed the database (optional)
+   ```bash
+   cd apps/api
+   pnpm db:seed
+   ```
 
-```
-cd my-turborepo
+### Running the Project
+
+#### Development Mode
+
+```bash
+# From project root
 pnpm dev
 ```
 
-### Remote Caching
+This will start:
 
-> [!TIP]
-> Vercel Remote Cache is free for all plans. Get started today at [vercel.com](https://vercel.com/signup?/signup?utm_source=remote-cache-sdk&utm_campaign=free_remote_cache).
+- Frontend on http://localhost:3000
+- API on http://localhost:3001
 
-Turborepo can use a technique known as [Remote Caching](https://turborepo.com/docs/core-concepts/remote-caching) to share cache artifacts across machines, enabling you to share build caches with your team and CI/CD pipelines.
+#### Production Mode
 
-By default, Turborepo will cache locally. To enable Remote Caching you will need an account with Vercel. If you don't have an account you can [create one](https://vercel.com/signup?utm_source=turborepo-examples), then enter the following commands:
+```bash
+# Build all applications
+pnpm build
 
-```
-cd my-turborepo
-npx turbo login
-```
-
-This will authenticate the Turborepo CLI with your [Vercel account](https://vercel.com/docs/concepts/personal-accounts/overview).
-
-Next, you can link your Turborepo to your Remote Cache by running the following command from the root of your Turborepo:
-
-```
-npx turbo link
+# Start in production mode
+pnpm start
 ```
 
-## Useful Links
+### Using Docker
 
-Learn more about the power of Turborepo:
+```bash
+# Start PostgreSQL database
+docker-compose up -d
 
-- [Tasks](https://turborepo.com/docs/crafting-your-repository/running-tasks)
-- [Caching](https://turborepo.com/docs/crafting-your-repository/caching)
-- [Remote Caching](https://turborepo.com/docs/core-concepts/remote-caching)
-- [Filtering](https://turborepo.com/docs/crafting-your-repository/running-tasks#using-filters)
-- [Configuration Options](https://turborepo.com/docs/reference/configuration)
-- [CLI Usage](https://turborepo.com/docs/reference/command-line-reference)
+# Then follow the installation steps above
+```
+
+### Database Commands
+
+```bash
+# Navigate to API directory
+cd apps/api
+
+# Generate Prisma client
+pnpm db:generate
+
+# Apply migrations
+pnpm db:push
+
+# View database in browser
+pnpm db:studio
+
+# Seed database
+pnpm db:seed
+```
+
+## Features
+
+- **Authentication and authorization**: Login system and access control.
+- **User management**: User creation and administration.
+- **Expense categories**: Organization of expenses by categories.
+- **Expense tracking**: Add, edit and delete expenses.
+- **Reports**: Expense visualization and statistics.
+- **Multi-currency support**: Record expenses in different currencies with automatic conversion.
+- **Exchange rate management**: Configure and update exchange rates.
+
+## Project Structure
+
+```
+control-fit/
+├── apps/
+│   ├── api/          # NestJS Backend
+│   └── web/          # Next.js Frontend
+├── packages/
+│   ├── ui/           # Shared UI components
+│   └── config/       # Shared configurations
+└── docker-compose.yml
+```
+
+## Licence
+
+[MIT](LICENSE)
